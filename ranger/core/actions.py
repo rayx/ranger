@@ -425,26 +425,6 @@ class Actions(  # pylint: disable=too-many-instance-attributes,too-many-public-m
 
         mode = kw['mode'] if 'mode' in kw else 0
 
-        # ranger can act as a file chooser when running with --choosefile=...
-        if mode == 0 and 'label' not in kw:
-            if ranger.args.choosefile:
-                with open(ranger.args.choosefile, 'w') as fobj:
-                    fobj.write(self.fm.thisfile.path)
-
-            if ranger.args.choosefiles:
-                paths = []
-                for hist in self.fm.thistab.history:
-                    for fobj in hist.files:
-                        if fobj.marked and fobj.path not in paths:
-                            paths += [fobj.path]
-                paths += [f.path for f in self.fm.thistab.get_selection() if f.path not in paths]
-
-                with open(ranger.args.choosefiles, 'w') as fobj:
-                    fobj.write('\n'.join(paths) + '\n')
-
-            if ranger.args.choosefile or ranger.args.choosefiles:
-                raise SystemExit
-
         if isinstance(files, set):
             files = list(files)
         elif not isinstance(files, (list, tuple)):
