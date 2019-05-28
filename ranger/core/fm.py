@@ -425,6 +425,19 @@ class FM(Actions,  # pylint: disable=too-many-instance-attributes
                 # '\udcf6' in position 42: surrogates not allowed
                 with open(ranger.args.choosedir, 'w') as fobj:
                     fobj.write(self.thisdir.path)
+            if ranger.args.choosefiles:
+                paths = []
+                for hist in self.fm.thistab.history:
+                    for fobj in hist.files:
+                        if fobj.marked and fobj.path not in paths:
+                            paths += [fobj.path]
+                # Don't pass the highlighted item unless it's explicitly marked.
+                if self.fm.thistab.thisdir:
+                    for fobj in self.fm.thistab.thisdir.marked_items:
+                        if fobj.marked and fobj.path not in paths:
+                            paths += [fobj.path]
+                with open(ranger.args.choosefiles, 'w') as fobj:
+                    fobj.write('\n'.join(paths) + '\n')
             self.bookmarks.remember(self.thisdir)
             self.bookmarks.save()
 
